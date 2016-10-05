@@ -84,7 +84,7 @@ public class CompanionSettings {
 
     public static final int KEY_TIME_TZ_DEF = INTERACTIVE;
 
-    public static final String PATH_WITH_FEATURE = "/DevOpsTime";
+    public static final String PATH_WITH_FEATURE = "/GraffitiPlum";
 
 
     public static int getInt(final Context context, final String key, final int defaultValue) {

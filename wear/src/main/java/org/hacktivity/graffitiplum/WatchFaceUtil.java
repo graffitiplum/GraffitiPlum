@@ -91,6 +91,7 @@ public final class WatchFaceUtil {
 
     public static final boolean KEY_EPOCH_DIM_DEF = false;
 
+
     public static final String KEY_USE_SHORT_CARDS = "use_short_cards";
 
     public static final boolean KEY_USE_SHORT_CARDS_DEF = true;
@@ -101,7 +102,7 @@ public final class WatchFaceUtil {
 
     public static final String KEY_TIME_TZ_INTERACTIVE_STATE = "timestamp_tz_interactive_state";
 
-    public static final String PATH_WITH_FEATURE = "/DevOpsTime";
+    public static final String PATH_WITH_FEATURE = "/GraffitiPlum";
 
 
     public static int getInt(final Context context, final String key, final int defaultValue) {

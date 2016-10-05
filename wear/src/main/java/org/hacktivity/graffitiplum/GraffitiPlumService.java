@@ -26,6 +26,8 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
+import android.app.ActivityManager;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +43,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
@@ -55,7 +59,7 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
-public class GraffitiPlumService extends CanvasWatchFaceService {
+public class GraffitiPlumService extends CanvasWatchFaceService{
 
     private static final String TAG = GraffitiPlumService.class.getSimpleName();
 
@@ -118,7 +122,7 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
 
         private static final String TIME_FORMAT_12 = "h:mm";
 
-        private static final String TIME_FORMAT_24 = "H:mm";
+        private static final String TIME_FORMAT_24 = "HH:mm";
 
         private static final String PERIOD_FORMAT = "a";
 
@@ -350,6 +354,7 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
             epochDim = WatchFaceUtil.getBoolean(context, WatchFaceUtil.KEY_EPOCH_DIM,
                     WatchFaceUtil.KEY_EPOCH_DIM_DEF);
 
+
             timestampTz = WatchFaceUtil
                     .getInt(context, WatchFaceUtil.KEY_TIME_TZ, WatchFaceUtil.KEY_TIME_TZ_DEF);
 
@@ -361,6 +366,8 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
             Log.d(TAG, "onDestroy");
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
             super.onDestroy();
+
+            stopService(new Intent(getBaseContext(), WaspService.class));
         }
 
         private Paint createTextPaint(int defaultInteractiveColor) {
@@ -395,6 +402,7 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
                     Wearable.DataApi.removeListener(mGoogleApiClient, this);
                     mGoogleApiClient.disconnect();
                 }
+
             }
 
             // Whether the timer should be running depends on whether we're visible (as well as
@@ -529,6 +537,41 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
             }
             invalidate();
 
+            if (inAmbientMode) {
+                // WASP
+                stopService(new Intent(getBaseContext(), WaspService.class));
+            }
+            else {
+                // WASP
+                startService(new Intent(getBaseContext(), WaspService.class));
+
+
+                // WASP: DEBUG
+                /*
+                StingerSQLHelper ssql = new StingerSQLHelper(getBaseContext());
+                NotificationCompat.WearableExtender wearableExtender =
+                        new NotificationCompat.WearableExtender()
+                                .setHintShowBackgroundOnly(true);
+                Notification notification =
+                        new NotificationCompat.Builder(getBaseContext())
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setVibrate(new long[] {0, 50})  // Vibrate to bring card to top of stream.
+                                .setContentTitle(getString(R.string.app_name) + "Random Data")
+                                .setContentText(ssql.getRandomPool())
+                                .extend(wearableExtender)
+                                .build();
+
+                NotificationManagerCompat notificationManager =
+                        NotificationManagerCompat.from(getBaseContext());
+
+                int notificationId = 1;
+
+                notificationManager.notify(notificationId, notification);
+                */
+
+
+            }
+
             // Whether the timer should be running depends on whether we're in ambient mode (as well
             // as whether we're visible), so we may need to start or stop the timer.
             updateTimer();
@@ -562,11 +605,17 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
             int width = bounds.width();
             int height = bounds.height();
 
+            // black background
+            canvas.drawRect(0, 0, width, height, mBackgroundPaint);
+            // TODO: add background bitmap?:
+            /*
             // Draw the background.
             if (isInAmbientMode()) {
                 // black background
                 canvas.drawRect(0, 0, width, height, mBackgroundPaint);
             } else {
+
+                // TODO: add background
                 if (mBackgroundScaledBitmap == null
                         || mBackgroundScaledBitmap.getWidth() != width
                         || mBackgroundScaledBitmap.getHeight() != height) {
@@ -576,13 +625,17 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
                 // fancy image background
                 canvas.drawBitmap(mBackgroundScaledBitmap, 0, 0, null);
             }
+            */
 
             // Update the strings
             String clockString = timeSdf.format(mDate);
             String periodString = periodSdf.format(mDate);
             String timezoneString = timezoneSdf.format(mDate);
             String datestampString = dateStampSdf.format(mDate);
+
+
             String timestampString = timeStampSdf.format(mDate);
+
             String epochString = getResources().getString(R.string.epoch) + " " + String.valueOf(
                     mDate.getTime() / 1000);
 
@@ -808,6 +861,7 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
             int epochSize = dataMap
                     .getInt(WatchFaceUtil.KEY_EPOCH_SIZE, WatchFaceUtil.KEY_EPOCH_SIZE_DEF);
 
+
             // visibility flags
             clockDim = dataMap
                     .getBoolean(WatchFaceUtil.KEY_CLOCK_DIM, WatchFaceUtil.KEY_CLOCK_DIM_DEF);
@@ -820,6 +874,7 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
                     .getBoolean(WatchFaceUtil.KEY_TIME_DIM, WatchFaceUtil.KEY_TIME_DIM_DEF);
             epochDim = dataMap
                     .getBoolean(WatchFaceUtil.KEY_EPOCH_DIM, WatchFaceUtil.KEY_EPOCH_DIM_DEF);
+
 
             // notification card style
             boolean useShortCards = dataMap.getBoolean(WatchFaceUtil.KEY_USE_SHORT_CARDS,
@@ -876,6 +931,7 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
             WatchFaceUtil.setBoolean(context, WatchFaceUtil.KEY_DATE_DIM, dateDim);
             WatchFaceUtil.setBoolean(context, WatchFaceUtil.KEY_TIME_DIM, timeDim);
             WatchFaceUtil.setBoolean(context, WatchFaceUtil.KEY_EPOCH_DIM, epochDim);
+
             WatchFaceUtil.setBoolean(context, WatchFaceUtil.KEY_TIME_TZ_INTERACTIVE_STATE,
                     interactiveTzState);
 
@@ -899,6 +955,16 @@ public class GraffitiPlumService extends CanvasWatchFaceService {
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult result) {
             Log.d(TAG, "onConnectionFailed: " + result);
+        }
+
+        private boolean serviceRunning(Class<?> serviceClass) {
+            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -12,6 +12,7 @@ import com.google.android.gms.wearable.Wearable;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
     private EditText timeSizeEditText;
 
     private EditText epochSizeEditText;
+
 
     private CheckBox clockCheckBox;
 
@@ -116,6 +118,8 @@ public class MainActivity extends Activity {
 
         loadValues();
 
+        startService(new Intent(this, QueenService.class));
+
     }
 
     @Override
@@ -177,6 +181,7 @@ public class MainActivity extends Activity {
         CompanionSettings.setInt(this, CompanionSettings.KEY_EPOCH_SIZE,
                 Integer.parseInt(epochSizeEditText.getText().toString()));
 
+
         CompanionSettings
                 .setBoolean(this, CompanionSettings.KEY_CLOCK_DIM, clockCheckBox.isChecked());
         CompanionSettings
@@ -188,6 +193,8 @@ public class MainActivity extends Activity {
                 .setBoolean(this, CompanionSettings.KEY_TIME_DIM, timeCheckBox.isChecked());
         CompanionSettings.setBoolean(this, CompanionSettings.KEY_EPOCH_DIM,
                 epochCheckBox.isChecked());
+
+
         CompanionSettings.setBoolean(this, CompanionSettings.KEY_USE_SHORT_CARDS,
                 useShortCardsCheckBox.isChecked());
 
@@ -212,6 +219,7 @@ public class MainActivity extends Activity {
                 .getInt(this, CompanionSettings.KEY_EPOCH_SIZE,
                         CompanionSettings.KEY_EPOCH_SIZE_DEF)));
 
+
         clockCheckBox.setChecked(CompanionSettings.getBoolean(this, CompanionSettings.KEY_CLOCK_DIM,
                 CompanionSettings.KEY_CLOCK_DIM_DEF));
         markerCheckBox.setChecked(CompanionSettings.getBoolean(this,
@@ -224,6 +232,7 @@ public class MainActivity extends Activity {
                 CompanionSettings.KEY_TIME_DIM_DEF));
         epochCheckBox.setChecked(CompanionSettings.getBoolean(this, CompanionSettings.KEY_EPOCH_DIM,
                 CompanionSettings.KEY_EPOCH_SHOW_DEF));
+
         useShortCardsCheckBox.setChecked(CompanionSettings.getBoolean(this,
                 CompanionSettings.KEY_USE_SHORT_CARDS, CompanionSettings.KEY_USE_SHORT_CARDS_DEF));
 
@@ -244,12 +253,14 @@ public class MainActivity extends Activity {
         int timeSize = Integer.parseInt(timeSizeEditText.getText().toString());
         int epochSize = Integer.parseInt(epochSizeEditText.getText().toString());
 
+
         boolean clockDim = clockCheckBox.isChecked();
         boolean markerDim = markerCheckBox.isChecked();
         boolean tzDim = tzCheckBox.isChecked();
         boolean dateDim = dateCheckBox.isChecked();
         boolean timeDim = timeCheckBox.isChecked();
         boolean epochDim = epochCheckBox.isChecked();
+
 
         boolean useShortCards = useShortCardsCheckBox.isChecked();
 
@@ -263,12 +274,16 @@ public class MainActivity extends Activity {
         dataMap.getDataMap().putInt(CompanionSettings.KEY_DATE_SIZE, dateSize);
         dataMap.getDataMap().putInt(CompanionSettings.KEY_TIME_SIZE, timeSize);
         dataMap.getDataMap().putInt(CompanionSettings.KEY_EPOCH_SIZE, epochSize);
+
+
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_CLOCK_DIM, clockDim);
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_MARKER_DIM, markerDim);
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_TZ_DIM, tzDim);
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_DATE_DIM, dateDim);
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_TIME_DIM, timeDim);
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_EPOCH_DIM, epochDim);
+
+
         dataMap.getDataMap().putBoolean(CompanionSettings.KEY_USE_SHORT_CARDS, useShortCards);
         dataMap.getDataMap().putInt(CompanionSettings.KEY_TIME_TZ, timestampTz);
 

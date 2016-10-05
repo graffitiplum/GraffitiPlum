@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DevOps Time</string>
+    <string name="app_name">Graffiti Plum</string>
     <string name="subtitle">ISO 8601 Timestamps for Android Wear</string>
     <string name="clock">Clock</string>
     <string name="marker">AM/PM</string>
