@@ -118,8 +118,6 @@ public class MainActivity extends Activity {
 
         loadValues();
 
-        startService(new Intent(this, QueenService.class));
-
     }
 
     @Override

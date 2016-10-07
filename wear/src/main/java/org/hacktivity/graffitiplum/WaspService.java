@@ -53,7 +53,7 @@ public class WaspService extends Service implements SensorEventListener, Locatio
 
     // TODO: Add GPS support.
 
-    //StingerSQLHelper ssql;
+    StingerSQLHelper ssql;
 
     GoogleApiClient googleApiClient;
 
@@ -97,7 +97,7 @@ public class WaspService extends Service implements SensorEventListener, Locatio
         // List all sensors available
         //List<Sensor> deviceSensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
 
-        //ssql = new StingerSQLHelper(this);
+        ssql = new StingerSQLHelper(this);
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -127,11 +127,11 @@ public class WaspService extends Service implements SensorEventListener, Locatio
                     try {
 
 
-                        //String randomPool = ssql.getRandomPool();
+                        String randomPool = ssql.getRandomPool();
 
                         MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-                        /*if (randomPool != null) {
+                        if (randomPool != null) {
 
                             byte[] ba1 = getPool().getBytes();
                             byte[] ba2 = randomPool.getBytes();
@@ -147,9 +147,6 @@ public class WaspService extends Service implements SensorEventListener, Locatio
                         else {
                             md.update(getPool().getBytes());
                         }
-                        */
-
-                        md.update(getPool().getBytes());
 
                         //md.update(getPool().getBytes());
 
@@ -162,7 +159,7 @@ public class WaspService extends Service implements SensorEventListener, Locatio
                         final String postData = data;
 
                         // Update local DB
-                        //ssql.addPool(hash);
+                        ssql.addPool(hash);
 
                         //String [] myData = new String[]{postData};
                         //new DataTask (getBaseContext(), myData, googleApiClient).execute();

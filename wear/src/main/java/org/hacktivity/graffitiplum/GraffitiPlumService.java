@@ -966,5 +966,6 @@ public class GraffitiPlumService extends CanvasWatchFaceService{
             }
             return false;
         }
+
     }
 }
